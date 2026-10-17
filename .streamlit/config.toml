@@ -1,0 +1,14 @@
+[theme]
+# 60% Dominant Background (Deep slate / charcoal)
+backgroundColor = "#0e131f"
+
+# 30% Secondary Surface (Sidebar, cards, input panels)
+secondaryBackgroundColor = "#1a2234"
+
+# Text Color (Clean off-white for high legibility)
+textColor = "#e2e8f0"
+
+# 10% Accent Color (Emerald green cryptographic security accent)
+primaryColor = "#10b981"
+
+font = "sans serif"
