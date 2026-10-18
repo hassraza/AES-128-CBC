@@ -27,48 +27,59 @@ In modern cryptographic systems, raw block ciphers encrypt fixed blocks of data 
 7. **Strict Input Validation:** Enforces valid 16-byte ASCII strings or 32-character hexadecimal keys/IVs using regex guards.
 
 ---
-
 ## 🔬 How It Works (Cryptographic Pipeline)
 
 ### 1. Encryption Workflow
-Plaintext String ("This is a secret...")
-│
-▼
-UTF-8 Encoding ➔ PKCS#7 Padding (Padded to multiple of 16 bytes)
-│
-▼
-AES-128 CBC Encryptor (Key = 16 bytes, IV = 16 bytes)
-│
-▼
+
+```text
+Plaintext String ("This is a secret message for my assignment.")
+   │ (43 bytes)
+   ▼
+UTF-8 Encode ➔ Apply PKCS#7 Padding (+5 bytes of 0x05)
+   │
+   ▼
+Padded Data Block (48 bytes total / 3 blocks of 16 bytes)
+   │
+   ▼
+AES-128 CBC Encryptor (Key: 16 bytes, IV: 16 bytes)
+   │
+   ▼
 Raw Ciphertext (48 bytes)
-│
-▼
-Prepend IV: [ 16 bytes IV ] + [ 48 bytes Ciphertext ] = 64 bytes
-│
-▼
-Base64 Encode ➔ Final Export Payload
+   │
+   ▼
+Concatenate: [ 16 bytes IV ] + [ 48 bytes Ciphertext ] = 64 bytes total
+   │
+   ▼
+Base64 Encode
+   │
+   ▼
+Final Storage Payload (88 ASCII characters)
 
-### 2. Decryption Workflow
-Base64 Payload
-│
-▼
-Base64 Decode ➔ 64 bytes raw binary
-│
-├─────────────────────────┬─────────────────────────┐
-▼                                                   ▼
-Extract First 16 Bytes (IV)             Extract Remaining Bytes (Ciphertext)
-│                                                   │
-└─────────────────────────┬─────────────────────────┘
-▼
-AES-128 CBC Decryptor (Key + Extracted IV)
-▼
-Padded Plaintext Bytes
-▼
-PKCS#7 Unpadding ➔ UTF-8 Decode
-▼
-Original Plaintext Note
----
+**### 2. Decryption Workflow**
 
+Base64 Storage Payload
+   │
+   ▼
+Base64 Decode ➔ 64 bytes combined binary data
+   │
+   ├───────────────────────────────┬───────────────────────────────┐
+   │ (First 16 bytes)              │ (Remaining 48 bytes)
+   ▼                               ▼
+Extracted IV (16 bytes)         Raw Ciphertext (48 bytes)
+   │                               │
+   └───────────────┬───────────────┘
+                   ▼
+       AES-128 CBC Decryptor (Key: 16 bytes + Extracted IV)
+                   ▼
+         Padded Plaintext Bytes (48 bytes)
+                   ▼
+       PKCS#7 Unpadding (Removes trailing 5 padding bytes)
+                   ▼
+         Original Plaintext Bytes (43 bytes)
+                   ▼
+              UTF-8 Decode
+                   ▼
+       Recovered Plaintext Note ("This is a secret...")
 ## 🧪 Assignment Benchmark Test Vector
 
 The implementation strictly validates against the assigned reference vector:
