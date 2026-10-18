@@ -9,7 +9,7 @@ from cryptography.hazmat.backends import default_backend
 # Page Configuration & Clean Styling
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="CipherVault | AES-128 CBC",
+    page_title=AES-128 CBC",
     page_icon="🔒",
     layout="centered"
 )
